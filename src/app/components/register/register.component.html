@@ -1,0 +1,202 @@
+<div class="container-fluid pt-3 px-1 px-md-5 px-lg-1 px-xl-5 mx-auto">
+    <div class="card card0 border-0">
+        <div class="row d-flex">
+            <div class="col-lg-4">
+                <div class="card1 pb-5">
+                    <div class="row"> <img src="https://i.imgur.com/CXQmsmF.png" class="logo"> </div>
+                    <div class="row px-3 justify-content-center mt-4 mb-5 border-line"> <img
+                            src="http://askdigitalguru.in/wp-content/uploads/2020/07/seo-search-engine-optimization-vector-2.jpg"
+                            class="image"> </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card2 card border-0 px-4 py-5">
+                    <div class="row mb-4 px-3">
+                        <h6 class="mb-0 mr-4 mt-2">Sign in with</h6>
+                        <div class="facebook text-center mr-3">
+                            <div class="fa fa-facebook"></div>
+                        </div>
+                        <div class="twitter text-center mr-3">
+                            <div class="fa fa-twitter"></div>
+                        </div>
+                        <div class="linkedin text-center mr-3">
+                            <div class="fa fa-linkedin"></div>
+                        </div>
+                    </div>
+                    <div class="row px-3 mb-4">
+                        <div class="line"></div> <small class="or text-center">Or</small>
+                        <div class="line"></div>
+                    </div>
+                    <form [formGroup]="formRegister" (ngSubmit)="submitDataRegister()">
+                        <div class="row">
+                            <div class="col">
+                                <h6 class="mb-0 text-sm">Họ</h6>
+                                <input type="text" formControlName="firstName" class="form-control" maxlength="50"
+                                    minlength="5" placeholder="Nhập họ & tên đệm" #input tabindex="1" autofocus
+                                    [ngClass]="{
+                                        'is-valid': (formRegister.controls?.firstName?.valid && (formRegister.controls?.firstName?.touched)),
+                                        'is-invalid': (formRegister.controls?.firstName?.invalid && (formRegister.controls?.firstName?.touched))}">
+                                    <!-- [ngClass]="{ 'is-invalid': formRegister.controls.firstName.errors }" -->
+                                <div *ngIf="formRegister.controls.firstName.errors" class="invalid-feedback">
+                                    <div *ngIf="formRegister.controls.firstName.errors?.required">Vui lòng nhập họ & tên
+                                        đệm!
+                                    </div>
+                                    <div *ngIf="formRegister.controls.firstName.errors?.maxLength">Họ & tên đệm không
+                                        quá 50 ký tự!
+                                    </div>
+                                    <div *ngIf="formRegister.controls.firstName.errors?.minLength">Họ & tên đệm không
+                                        nhỏ hơn 5 ký tự!
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <h6 class="mb-0 text-sm">Tên</h6>
+                                <input type="text" formControlName="lastName" class="form-control" maxlength="50"
+                                    placeholder="Nhập tên" tabindex="2"
+                                    [ngClass]="{
+                                        'is-valid': (formRegister.controls?.lastName?.valid && (formRegister.controls?.lastName?.touched)),
+                                        'is-invalid': (formRegister.controls?.lastName?.invalid && (formRegister.controls?.lastName?.touched))}">
+                                <div *ngIf="formRegister.controls.lastName.errors" class="invalid-feedback">
+                                    <div *ngIf="formRegister.controls.lastName.errors?.required">Vui lòng nhập tên!
+                                    </div>
+                                    <div *ngIf="formRegister.controls.lastName.errors?.maxLength">Tên không quá 50 ký
+                                        tự!
+                                    </div>
+                                    <!-- <div *ngIf="formRegister.controls.lastName.errors?.minLength">Tên không nhỏ hơn 5 ký
+                                        tự!
+                                    </div> -->
+                                </div>
+                            </div>
+                        </div>
+                        &nbsp;
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h6 class="mb-0 text-sm">Email</h6>
+                                <input type="text" formControlName="email" class="form-control" maxlength="50"
+                                    minlength="5" placeholder="Nhập địa chỉ email" tabindex="3"
+                                    [ngClass]="{
+                                        'is-valid': (formRegister.controls?.email?.valid && (formRegister.controls?.email?.touched)),
+                                        'is-invalid': (formRegister.controls?.email?.invalid && (formRegister.controls?.email?.touched))}">
+                                <div *ngIf="formRegister.controls.email.errors" class="invalid-feedback">
+                                    <div *ngIf="formRegister.controls.email.errors?.required">Vui lòng nhập email!
+                                    </div>
+                                    <div *ngIf="formRegister.controls.email.errors?.pattern">Email không đúng định dạng!
+                                    </div>
+                                    <div *ngIf="formRegister.controls.email.errors?.maxLength">Email không quá 50 ký tự!
+                                    </div>
+                                    <div *ngIf="formRegister.controls.email.errors?.minLength">Email không nhỏ hơn 5 ký
+                                        tự!
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <h6 class="mb-0 text-sm">Số điện thoại</h6>
+                                <!-- oninput="this.value=(parseInt(this.value)||0)" -->
+                                <input type="text" class="form-control" placeholder="Nhập số điện thoại" tabindex="4"
+                                    formControlName="phone"  name="phone" id="phone" maxlength="12" required
+                                    [ngClass]="{
+                                        'is-valid': (formRegister.controls?.phone?.valid && (formRegister.controls?.phone?.touched)),
+                                        'is-invalid': (formRegister.controls?.phone?.invalid && (formRegister.controls?.phone?.touched))}">
+                                <div *ngIf="formRegister.controls.phone.errors" class="invalid-feedback">
+                                    <div *ngIf="formRegister.controls.phone.errors?.required">Số điện thoại không để trống!
+                                    </div>
+                                    <div *ngIf="formRegister.controls.phone.errors?.largePhone">Số điện thoại không quá 20
+                                        ký tự!
+                                    </div>
+                                    <div *ngIf="formRegister.controls.phone.errors?.pattern">Số điện thoại không đúng
+                                        định dạng!
+                                    </div>
+                                    <div *ngIf="formRegister.controls.phone.errors?.minPhone">Số điện thoại không nhỏ hơn 9
+                                        số!
+                                    </div>
+                                    <div *ngIf="formRegister.controls.phone.errors?.maxPhone">Số điện thoại không lớn hơn 12
+                                        số!
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <h6 class="mb-0 text-sm">Tên đăng nhập</h6>
+                                <input type="text" formControlName="username" class="form-control"
+                                    placeholder="Tên đăng nhập" maxlength="50" minlength="5" tabindex="5"
+                                    [ngClass]="{
+                                        'is-valid': (formRegister.controls?.username?.valid && (formRegister.controls?.username?.touched)),
+                                        'is-invalid': (formRegister.controls?.username?.invalid && (formRegister.controls?.username?.touched))}">
+                                <div *ngIf="formRegister.controls.username.errors" class="invalid-feedback">
+                                    <div *ngIf="formRegister.controls.username.errors?.required">Vui lòng nhập tên đăng
+                                        nhập!
+                                    </div>
+                                    <div *ngIf="formRegister.controls.username.errors?.maxLength">Tên đăng nhập không
+                                        quá 50 ký tự!
+                                    </div>
+                                    <div *ngIf="formRegister.controls.username.errors?.minLength">Tên đăng nhập không
+                                        nhỏ hơn 5 ký
+                                        tự!
+                                    </div>
+                                    <div *ngIf="formRegister.controls.username.errors?.pattern">Tên đăng nhập không đúng
+                                        định dạng!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        &nbsp;
+                        <div class="row">
+                            <div class="col">
+                                <h6 class="mb-0 text-sm">Mật khẩu</h6>
+                                <input type="password" class="form-control" formControlName="password"
+                                    placeholder="Nhập mật khẩu" tabindex="6"
+                                    [ngClass]="{
+                                        'is-valid': (formRegister.controls?.password?.valid && (formRegister.controls?.password?.touched)),
+                                        'is-invalid': (formRegister.controls?.password?.invalid && (formRegister.controls?.password?.touched))}" maxlength="50"
+                                    minlength="5">
+                                <div *ngIf="formRegister.controls.password.errors" class="invalid-feedback">
+                                    <div *ngIf="formRegister.controls.password.errors?.required">Vui lòng nhập mật khẩu!
+                                    </div>
+                                    <div *ngIf="formRegister.controls.password.errors?.maxLength">Mật khẩu không
+                                        quá 50 ký tự!
+                                    </div>
+                                    <div *ngIf="formRegister.controls.password.errors?.minLength">Mật khẩu không
+                                        nhỏ hơn 5 ký tự!
+                                    </div>
+                                    <!-- <div *ngIf="formRegister.controls.password.errors?.pattern">Mật khẩu không đúng
+                                        định dạng!
+                                    </div> -->
+                                </div>
+                            </div>
+                            <div class="col">
+                                <h6 class="mb-0 text-sm">Nhập lại mật khẩu</h6>
+                                <input type="password" class="form-control" formControlName="repassword"
+                                    placeholder="Nhập lại mật khẩu" tabindex="7"
+                                    [ngClass]="{
+                                        'is-valid': (formRegister.controls?.repassword?.valid && (formRegister.controls?.repassword?.touched)),
+                                        'is-invalid': (formRegister.controls?.repassword?.invalid && (formRegister.controls?.repassword?.touched))}" maxlength="50"
+                                    minlength="5">
+                                <div *ngIf="formRegister.controls.repassword.errors" class="invalid-feedback">
+                                    <!-- <div *ngIf="formRegister.controls['repassword'].errors.notSame">Mật khẩu không
+                                        trùng khớp!
+                                    </div> -->
+                                    <div *ngIf="formRegister.controls['repassword'].errors.required">Vui lòng nhập lại
+                                        mật khẩu!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        &nbsp;
+                        <div class="row mb-3 px-2"> <button type="submit" tabindex="8" (keydown.Tab)="onKey($event);false;" class="btn btn-blue text-center">Đăng
+                                ký</button>
+                        </div>
+                        <div class="row px-2"> <small class="font-weight-bold">Đã có tài khoản? <a class="text-info"
+                                    href="/">Trang chủ</a></small> </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="bg-blue py-2">
+            <div class="row px-3"> <small class="ml-4 ml-sm-5 mb-2">Copyright &copy; 2021. All rights reserved.</small>
+                <div class="social-contact ml-4 ml-sm-auto"> <span class="fa fa-facebook mr-4 text-sm"></span> <span
+                        class="fa fa-google-plus mr-4 text-sm"></span> <span class="fa fa-linkedin mr-4 text-sm"></span>
+                    <span class="fa fa-twitter mr-4 mr-sm-5 text-sm"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

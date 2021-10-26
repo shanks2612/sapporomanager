@@ -1,0 +1,657 @@
+<!-- Page Heading -->
+<!-- <h1 class="h3 mb-2 text-gray-800">Quản lý tài khoản</h1> -->
+<!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+    For more information about DataTables, please visit the <a target="_blank"
+        href="https://datatables.net">official DataTables documentation</a>.</p> -->
+<div class="d-flex pb-2">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAccount">
+        <i class="fa fa-plus"></i>&nbsp;&nbsp;Thêm tài khoản
+    </button>
+    &nbsp;
+    <!-- <button type="button" class="btn btn-danger">
+        <i class="fa fa-times"></i>&nbsp;&nbsp;Xóa tài khoản
+    </button>
+    &nbsp; -->
+    <button (click)="refreshAllData()" type="button" class="btn btn-info">
+        <i class="fa fa-refresh"></i>Làm mới
+    </button>
+    &nbsp;
+    <div class="dropdown show">
+        <a class="btn btn-primary dropdown-toggle text-white" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-filter"></i>&nbsp;&nbsp;Hiển thị quyền
+        </a>
+
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <li *ngFor="let item of listDataRole" style="cursor: pointer;" (click)="selectValueAccountByRole(item)"
+                class="dropdown-item" value="{{item?.id}}">
+                {{item?.name}}</li>
+        </div>
+    </div>
+    &nbsp;
+    <div class="dropdown show">
+        <a class="btn btn-info dropdown-toggle text-white" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-filter"></i>&nbsp;&nbsp;Sắp xếp theo
+        </a>
+
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a style="cursor: pointer;" class="dropdown-item" (click)="refreshAllData()">Mặc định</a>
+            <a style="cursor: pointer;" class="dropdown-item">Tên
+                tên đầy đủ A-Z</a>
+            <a style="cursor: pointer;" class="dropdown-item">Tên
+                tên đầy đủ Z-A</a>
+        </div>
+    </div>
+</div>
+
+<!-- DATA TABLE SHOW DATA AND HANDLE -->
+<div class="card shadow">
+    <!-- HEADER CARD TABLE -->
+    <div class="card-header">
+        <div class="d-flex justify-content-between">
+            <div style="margin-left: -6px;">
+                <h5 id="exampleModalLabel" style="color: #09133A;">Quản lý tài khoản</h5>
+            </div>
+            <!-- SEARCHING FORM INPUT -->
+            <form class="form-inline float-right">
+                <input class="form-control" autofocus type="search" id="keywordSearch"
+                    placeholder="Tìm kiếm theo tên tài khoản..." aria-label="Search" id="keywordSearch"
+                    name="keywordSearch">
+            </form>
+            <!-- END SEARCHING FORM INPUT -->
+        </div>
+    </div>
+    <!-- END HEADER CARD TABLE -->
+    <!-- BODY CARD TABLE -->
+    <div class="card-body" style="height: 300px;">
+        <div class="table-responsive scroll-table" style="height: 230px;">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <!-- <th style="width: 8%;"></th> -->
+                        <th style="width: 30%;">Tên đầy đủ&nbsp;&nbsp;
+                            <i class="fa fa-sort" (click)="sortAlphabetColumn()"></i>
+                        </th>
+                        <th style="width: 20%;">Tên đăng nhập&nbsp;&nbsp;
+                            <i class="fa fa-sort" (click)="sortAlphabetColumnUsername()"></i>
+                        </th>
+                        <th style="width: 15%;">Số điện thoại&nbsp;&nbsp;
+                            <i class="fa fa-sort" (click)="sortNumberPhoneColumn()"></i>
+                        </th>
+                        <th style="width: 10%;text-align: center;">Quyền</th>
+                        <th style="width: 10%;text-align: center;">Tác vụ</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="listDataAccount.length != 0">
+                    <tr id="mytable" *ngFor="let item of listDataAccount | paginate: {itemsPerPage: pageSize, currentPage: page, totalItems: pageLength}">
+                        <!-- <td>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="checkbox-round" name="checkcategory">
+                            </div>
+                        </td> -->
+                        <td data-toggle="tooltip" data-placement="top" title="Tooltip on top">
+                            {{
+                            item?.fullName == '' || item?.fullName == null
+                            ? 'Dữ liệu trống'
+                            : item?.fullName.length > 25 ? item?.fullName.substring(0, 20).concat('...') :
+                            item?.fullName
+                            }}
+                        </td>
+                        <td>
+                            {{
+                            item?.username == '' || item?.username == null
+                            ? 'Dữ liệu trống'
+                            : item?.username.length > 25 ? item?.username.substring(0, 20).concat('...') :
+                            item?.username
+                            }}
+                        </td>
+                        <td style="direction: rtl;text-align: right;">{{ item?.phone | phoneFormat }}</td>
+                        <td style="text-align: center;">
+                            <span *ngIf="item?.role?.id == 1" class="badge rounded-pill bg-success badge-status">
+                                {{ item?.role?.name }}
+                            </span>
+                            <span *ngIf="item?.role?.id == 2" class="badge rounded-pill bg-success badge-status">
+                                {{ item?.role?.name }}
+                            </span>
+                            <span *ngIf="item?.role?.id == 3" class="badge rounded-pill bg-warning badge-status">
+                                {{ item?.role?.name }}
+                            </span>
+                            <span *ngIf="item?.role?.id == 4" class="badge rounded-pill bg-primary badge-status">
+                                {{ item?.role?.name }}
+                            </span>
+                            <span *ngIf="item?.role?.id == 5" class="badge rounded-pill bg-info badge-status">
+                                {{ item?.role?.name }}
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <a (click)="showDetailData(item?.id)"><i class="fa fa-eye text-success"></i></a>
+                            <a id="openModalDetail" [hidden]="true" data-toggle="modal"
+                                data-target="#detailAccount"></a>
+                            &nbsp;&nbsp;
+                            <!-- <a (click)="updateAccountData(item?.id)"><i class="fa fa-edit text-primary"></i></a>
+                            <a id="openModalUpdate" [hidden]="true" data-toggle="modal"
+                                data-target="#updateAccount"></a> -->
+                            <a (click)="updateAccountData(item?.id)"><i class="fa fa-edit text-primary"></i></a>
+                            <a id="openModalUpdate" [hidden]="true" data-toggle="modal"
+                                data-target="#updateAccount"></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div *ngIf="listDataAccount.length == 0">
+                <!-- <img src="https://cdn.dribbble.com/users/2382015/screenshots/6065978/no_result_still_2x.gif?compress=1&resize=400x300" alt="" srcset=""> -->
+                <div class="container h-100">
+                    <div class="row align-items-center h-100">
+                        <div class="col-6 mx-auto">
+                            <!-- <img width="100px" height="100px" src="https://digitalcollections.newmanstudies.org/assets/images/result_not_found.png" alt="" srcset=""> -->
+                            <div class="text-center bg-white" style="padding-top: 50px;">
+                                Oops...! Không có kết quả nào được tìm thấy
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pt-2"></div>
+        <!-- PAGiNATION DATA TABLE -->
+        <div class="d-flex">
+            <div class="col-md-5 d-flex mr-auto pt-2">
+                <span class="col-md-3" style="margin-left: -20px;">Hiển thị: </span>
+                <select style="height: 33px;margin-top:-6px;margin-left: -28px;border: 1px solid #F1F1F1;"
+                    class="form-control col-sm-2 border" placeholder="Select page" (change)='onOptionsSelected($event)'
+                    id="exampleFormControlSelect1">
+                    <option *ngFor="let pageSize of pageSizeOptions" [value]="pageSize">{{pageSize}}</option>
+                </select>
+            </div>
+            <div class="d-flex">
+                <span for="inputPassword" class="show-page-text col-md-10">Hiển thị {{pageSize}} trên
+                    {{pageLength}} bản ghi</span>
+                <form [formGroup]="formGoToPage" (ngSubmit)="submitGoToPage()">
+                    <input type="text" formControlName="numberPage" class="goto-box-page form-control" value="{{page}}">
+                </form>
+            </div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <div>
+                <pagination-controls (pageChange)="onPageChange($event)" previousLabel="" nextLabel=""
+                    screenReaderPaginationLabel="Pagination" screenReaderPageLabel="page"
+                    screenReaderCurrentLabel="You're on page" [maxSize]="6" boundary-links="true">
+                </pagination-controls>
+            </div>
+        </div>
+        <!-- END PAGiNATION DATA TABLE -->
+    </div>
+    <!-- END BODY CARD TABLE -->
+</div>
+<!-- END DATA TABLE SHOW DATA AND HANDLE -->
+
+<!-- Modal -->
+<div class="modal fade" id="addAccount" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm tài khoản</h5>
+                <button type="button" (click)="confirmBeforeCloseAddAccount()" class="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formData" (ngSubmit)="submitDataAccount()">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="exampleFormControlInput1">Tên đầy đủ <span
+                                    class="important-input">*</span></label>
+                            <input type="text" class="form-control" placeholder="Nhập tên đầy đủ"
+                                formControlName="fullName" maxlength="50" name="fullName" id="fullName"
+                                [ngClass]="{ 'is-invalid': formData.controls.fullName.errors }">
+                            <div *ngIf="formData.controls.fullName.errors" class="invalid-feedback">
+                                <div *ngIf="formData.controls.fullName.errors?.required">Tên đầy đủ không để trống!
+                                </div>
+                                <div *ngIf="formData.controls.fullName.errors?.wrongFullName">Tên không đúng định
+                                    dạng!
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="exampleFormControlInput1">Tên đăng nhập <span
+                                    class="important-input">*</span></label>
+                            <input type="text" class="form-control" placeholder="Nhập tên đăng nhập"
+                                formControlName="username" maxlength="10" name="username" id="username"
+                                [ngClass]="{ 'is-invalid': formData.controls.username.errors }">
+                            <div *ngIf="formData.controls.username.errors" class="invalid-feedback">
+                                <div *ngIf="formData.controls.username.errors?.required">Tên đăng nhập không để
+                                    trống!
+                                </div>
+                                <div *ngIf="formData.controls.username.errors?.pattern">Tên đăng nhập không đúng
+                                    định dạng!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="exampleFormControlInput1">Số điện thoại <span
+                                    class="important-input">*</span></label>
+                            <input type="text" class="form-control" placeholder="Nhập số điện thoại"
+                                formControlName="phone" name="phone" id="phone" maxlength="12" required
+                                [ngClass]="{ 'is-invalid': formData.controls.phone.errors }">
+                            <div *ngIf="formData.controls.phone.errors" class="invalid-feedback">
+                                <div *ngIf="formData.controls.phone.errors?.required">Số điện thoại không để trống!
+                                </div>
+                                <div *ngIf="formData.controls.phone.errors?.largePhone">Số điện thoại không quá 20
+                                    ký tự!
+                                </div>
+                                <div *ngIf="formData.controls.phone.errors?.pattern">Số điện thoại không đúng
+                                    định dạng!
+                                </div>
+                                <div *ngIf="formData.controls.phone.errors?.minPhone">Số điện thoại không nhỏ hơn 9
+                                    số!
+                                </div>
+                                <div *ngIf="formData.controls.phone.errors?.maxPhone">Số điện thoại không lớn hơn 12
+                                    số!
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+
+                            <label for="exampleFormControlInput1">Email <span class="important-input">*</span></label>
+                            <input type="email" class="form-control" placeholder="Nhập email" required
+                                [ngClass]="{ 'is-invalid': formData.controls.email.errors }" formControlName="email"
+                                name="email" id="email" maxlength="50" minlength="15">
+                            <div *ngIf="formData.controls.email.errors" class="invalid-feedback">
+                                <div *ngIf="formData.controls.email.errors?.required">Email không để
+                                    trống!
+                                </div>
+                                <div *ngIf="formData.controls.email.errors?.pattern">Email không đúng định dạng!
+                                </div>
+                                <!-- <div *ngIf="formData.controls.email.errors?.minLength">Email không nhỏ hơn 15 ký tự!
+                                </div>
+                                <div *ngIf="formData.controls.email.errors?.maxLength">Email không lớn hơn 50 ký tự!
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="exampleFormControlInput1">Mật khẩu <span
+                                    class="important-input">*</span></label>
+                            <input type="text" class="form-control" formControlName="password" name="password"
+                                id="password" placeholder="Nhập mật khẩu" required
+                                [ngClass]="{ 'is-invalid': formData.controls.password.errors }">
+                            <div *ngIf="formData.controls.password.errors" class="invalid-feedback">
+                                <div *ngIf="formData.controls.password.errors?.required">Mật khẩu không để
+                                    trống!
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="exampleFormControlSelect1">Quyền <span class="important-input">*</span></label>
+                            <select class="form-control" data-live-search="true" id="exampleFormControlSelect1"
+                                formControlName="roleId" required
+                                [ngClass]="{ 'is-invalid': formData.controls.roleId.errors }">
+                                <option value="">-- Chọn quyền --</option>
+                                <option *ngFor="let role of listDataRole" [ngValue]="role.id">
+                                    {{ role?.name }}
+                                </option>
+                            </select>
+                            <div *ngIf="formData.controls.roleId.errors" class="invalid-feedback">
+                                <div *ngIf="formData.controls.roleId.errors?.required">Vui lòng chọn quyền!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" [disabled]="!formData.valid"><i
+                                class="fa fa-plus"></i>&nbsp;&nbsp;Thêm</button>
+                        &nbsp;
+                        <!-- <button type="reset" class="btn btn-secondary">Reset</button> -->
+                        <button (click)="confirmBeforeCloseAddAccount()" type="button"
+                            class="btn btn-secondary">Đóng</button>
+                        <button hidden id="cancelSubmit" data-dismiss="modal" #closeBtn></button>
+                    </div>
+
+                    <div hidden class="form-group">
+                        <button type="button" class="btn btn-secondary" #closeBtn data-dismiss="modal">Đóng</button>
+
+
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="detailAccount" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Chi tiết nhân viên</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formDetail">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Họ và tên </label>
+                            <input type="text" readonly required class="form-control" name="fullName" id="fullName"
+                                formControlName="fullName" placeholder="Họ và tên">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Email</label>
+                            <input type="text" readonly class="form-control" required name="email" id="email"
+                                formControlName="email">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Số điện thoại</label>
+                            <!-- <input type="text" class="form-control" name="birthDay" id="birthDay"
+                                formControlName="birthDay" > -->
+                            <input type="text" readonly class="form-control" required name="phone" id="phone"
+                                formControlName="phone" />
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Tên đăng nhập</label>
+                            <input type="text" class="form-control" required readonly name="username" id="username"
+                                formControlName="username">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Ngày tạo </label>
+                            <input type="text" readonly required class="form-control" name="createdDate"
+                                id="createdDate" formControlName="createdDate" placeholder="Họ và tên">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Người tạo</label>
+                            <input type="text" readonly class="form-control" required name="createdBy" id="createdBy"
+                                formControlName="createdBy">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Ngày chỉnh sửa</label>
+                            <!-- <input type="text" class="form-control" name="birthDay" id="birthDay"
+                                formControlName="birthDay" > -->
+                            <input type="text" readonly class="form-control" required name="modifiedDate"
+                                id="modifiedDate" formControlName="modifiedDate" />
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Người chỉnh sửa</label>
+                            <input type="text" class="form-control" required readonly name="modifiedBy" id="modifiedBy"
+                                formControlName="modifiedBy">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Quyền </label>
+                            <input type="text" readonly required class="form-control bg-warning text-white"
+                                name="roleName" id="roleName" formControlName="roleName">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <!-- <button type="submit" tabindex="21" [disabled]="!formUpdate.valid"
+                            class="btn btn-primary"><i class="fa fa-edit"></i>
+                            Chỉnh sửa</button>
+                        &nbsp; -->
+                        <!-- <button type="reset" class="btn btn-secondary">Reset</button> -->
+                        <button type="button" tabindex="22" id="cancelUpdate" class="btn btn-secondary"
+                            data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div hidden class="form-group">
+                        <button type="button" class="btn btn-secondary" #closeBtn data-dismiss="modal">Đóng</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="updateAccount" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formUpdate" (ngSubmit)="saveUpdateDataAccount()">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="exampleFormControlInput1">Tên đầy đủ <span
+                                    class="important-input">*</span></label>
+                            <input type="text" class="form-control" placeholder="Nhập tên đầy đủ"
+                                formControlName="fullName" maxlength="50" name="fullName" id="fullName"
+                                [ngClass]="{ 'is-invalid': formUpdate.controls.fullName.errors }">
+                            <div *ngIf="formUpdate.controls.fullName.errors" class="invalid-feedback">
+                                <div *ngIf="formUpdate.controls.fullName.errors?.required">Tên đầy đủ không để trống!
+                                </div>
+                                <div *ngIf="formUpdate.controls.fullName.errors?.wrongFullName">Tên không đúng định
+                                    dạng!
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="exampleFormControlInput1">Tên đăng nhập <span
+                                    class="important-input">*</span></label>
+                            <input type="text" class="form-control" placeholder="Nhập tên đăng nhập"
+                                formControlName="username" maxlength="10" name="username" id="username"
+                                [ngClass]="{ 'is-invalid': formUpdate.controls.username.errors }">
+                            <div *ngIf="formUpdate.controls.username.errors" class="invalid-feedback">
+                                <div *ngIf="formUpdate.controls.username.errors?.required">Tên đăng nhập không để
+                                    trống!
+                                </div>
+                                <div *ngIf="formUpdate.controls.username.errors?.pattern">Tên đăng nhập không đúng
+                                    định dạng!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="exampleFormControlInput1">Số điện thoại <span
+                                    class="important-input">*</span></label>
+                            <input type="text" class="form-control" placeholder="Nhập số điện thoại"
+                                formControlName="phone" oninput="this.value=(parseInt(this.value)||0)" name="phone"
+                                id="phone" maxlength="12" required
+                                [ngClass]="{ 'is-invalid': formUpdate.controls.phone.errors }">
+                            <div *ngIf="formUpdate.controls.phone.errors" class="invalid-feedback">
+                                <div *ngIf="formUpdate.controls.phone.errors?.required">Số điện thoại không để trống!
+                                </div>
+                                <div *ngIf="formUpdate.controls.phone.errors?.largePhone">Số điện thoại không quá 20
+                                    ký tự!
+                                </div>
+                                <div *ngIf="formUpdate.controls.phone.errors?.pattern">Số điện thoại không đúng
+                                    định dạng!
+                                </div>
+                                <div *ngIf="formUpdate.controls.phone.errors?.minPhone">Số điện thoại không nhỏ hơn 9
+                                    số!
+                                </div>
+                                <div *ngIf="formUpdate.controls.phone.errors?.maxPhone">Số điện thoại không lớn hơn 12
+                                    số!
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+
+                            <label for="exampleFormControlInput1">Email <span class="important-input">*</span></label>
+                            <input type="email" class="form-control" placeholder="Nhập email" required
+                                [ngClass]="{ 'is-invalid': formUpdate.controls.email.errors }" formControlName="email"
+                                name="email" id="email" maxlength="50" minlength="15">
+                            <div *ngIf="formUpdate.controls.email.errors" class="invalid-feedback">
+                                <div *ngIf="formUpdate.controls.email.errors?.required">Email không để
+                                    trống!
+                                </div>
+                                <div *ngIf="formUpdate.controls.email.errors?.pattern">Email không đúng định dạng!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="exampleFormControlSelect1">Quyền <span class="important-input">*</span></label>
+                            <select class="form-control" data-live-search="true" id="exampleFormControlSelect1"
+                                formControlName="roleId" required
+                                [ngClass]="{ 'is-invalid': formUpdate.controls.roleId.errors }">
+                                <option value="">-- Chọn quyền --</option>
+                                <option *ngFor="let role of listDataRole" [ngValue]="role.id">
+                                    {{ role?.name }}
+                                </option>
+                            </select>
+                            <div *ngIf="formUpdate.controls.roleId.errors" class="invalid-feedback">
+                                <div *ngIf="formUpdate.controls.roleId.errors?.required">Vui lòng chọn quyền!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" [disabled]="!formUpdate.valid"><i
+                                class="fa fa-edit"></i>&nbsp;&nbsp;Chỉnh sửa</button>
+                        &nbsp;
+                        <!-- <button (click)="confirmBeforeCloseAddAccount()" type="button"
+                            class="btn btn-secondary">Đóng</button>
+                        <button hidden id="cancelSubmit" data-dismiss="modal" #closeBtn></button> -->
+                    </div>
+
+                    <div hidden class="form-group">
+                        <button type="button" class="btn btn-secondary" id="closeFormUpdate" #closeBtn
+                            data-dismiss="modal">Đóng</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<!-- <div class="modal fade" id="updateAccount" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Chỉnh sửa tài khoản</h5>
+                </div>
+                <div class="modal-body"> -->
+<!-- <form [formGroup]="formData" (ngSubmit)="submitDataAccount()">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="exampleFormControlInput1">Tên đầy đủ <span
+                                        class="important-input">*</span></label>
+                                <input type="text" class="form-control" placeholder="Nhập tên đầy đủ"
+                                    formControlName="fullName" maxlength="50" name="fullName" id="fullName"
+                                    [ngClass]="{ 'is-invalid': formData.controls.fullName.errors }">
+                                <div *ngIf="formData.controls.fullName.errors" class="invalid-feedback">
+                                    <div *ngIf="formData.controls.fullName.errors?.required">Tên đầy đủ không để trống!
+                                    </div>
+                                    <div *ngIf="formData.controls.fullName.errors?.wrongFullName">Tên không đúng định
+                                        dạng!
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="exampleFormControlInput1">Tên đăng nhập <span
+                                        class="important-input">*</span></label>
+                                <input type="text" class="form-control" placeholder="Nhập tên đăng nhập"
+                                    formControlName="username" maxlength="10" name="username" id="username"
+                                    [ngClass]="{ 'is-invalid': formData.controls.username.errors }">
+                                <div *ngIf="formData.controls.username.errors" class="invalid-feedback">
+                                    <div *ngIf="formData.controls.username.errors?.required">Tên đăng nhập không để
+                                        trống!
+                                    </div>
+                                    <div *ngIf="formData.controls.username.errors?.pattern">Tên đăng nhập không đúng
+                                        định dạng!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="exampleFormControlInput1">Số điện thoại <span
+                                        class="important-input">*</span></label>
+                                <input type="text" class="form-control" placeholder="Nhập số điện thoại"
+                                    formControlName="phone" name="phone" id="phone" maxlength="12" required
+                                    [ngClass]="{ 'is-invalid': formData.controls.phone.errors }">
+                                <div *ngIf="formData.controls.phone.errors" class="invalid-feedback">
+                                    <div *ngIf="formData.controls.phone.errors?.required">Số điện thoại không để trống!
+                                    </div>
+                                    <div *ngIf="formData.controls.phone.errors?.largePhone">Số điện thoại không quá 20
+                                        ký tự!
+                                    </div>
+                                    <div *ngIf="formData.controls.phone.errors?.pattern">Số điện thoại không đúng
+                                        định dạng!
+                                    </div>
+                                    <div *ngIf="formData.controls.phone.errors?.minPhone">Số điện thoại không nhỏ hơn 9
+                                        số!
+                                    </div>
+                                    <div *ngIf="formData.controls.phone.errors?.maxPhone">Số điện thoại không lớn hơn 12
+                                        số!
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+
+                                <label for="exampleFormControlInput1">Email <span
+                                        class="important-input">*</span></label>
+                                <input type="email" class="form-control" placeholder="Nhập email" required
+                                    [ngClass]="{ 'is-invalid': formData.controls.email.errors }" formControlName="email"
+                                    name="email" id="email" maxlength="50" minlength="15">
+                                <div *ngIf="formData.controls.email.errors" class="invalid-feedback">
+                                    <div *ngIf="formData.controls.email.errors?.required">Email không để
+                                        trống!
+                                    </div>
+                                    <div *ngIf="formData.controls.email.errors?.pattern">Email không đúng định dạng!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="exampleFormControlSelect1">Quyền <span
+                                        class="important-input">*</span></label>
+                                <select class="form-control" data-live-search="true" id="exampleFormControlSelect1"
+                                    formControlName="roleId" required
+                                    [ngClass]="{ 'is-invalid': formData.controls.roleId.errors }">
+                                    <option value="">-- Chọn quyền --</option>
+                                    <option *ngFor="let role of listDataRole" [ngValue]="role.id">
+                                        {{ role?.name }}
+                                    </option>
+                                </select>
+                                <div *ngIf="formData.controls.roleId.errors" class="invalid-feedback">
+                                    <div *ngIf="formData.controls.roleId.errors?.required">Vui lòng chọn quyền!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary" [disabled]="!formData.valid"><i
+                                    class="fa fa-plus"></i>&nbsp;&nbsp;Thêm</button>
+                            &nbsp;
+                            <button (click)="confirmBeforeCloseAddAccount()" type="button"
+                                class="btn btn-secondary">Đóng</button>
+                            <button hidden id="cancelSubmit" data-dismiss="modal" #closeBtn></button>
+                        </div>
+
+                        <div hidden class="form-group">
+                            <button type="button" class="btn btn-secondary" #closeBtn data-dismiss="modal">Đóng</button>
+                        </div>
+                    </form> -->
+<!-- </div>
+
+            </div>
+        </div>
+    </div> -->
+
+<!-- </div> -->

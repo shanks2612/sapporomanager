@@ -1,0 +1,666 @@
+<div class="pb-3">
+    <!-- Page Heading -->
+    <!-- <h1 class="h3 mb-2 text-gray-800">Quản lý nhân viên</h1> -->
+    <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+    For more information about DataTables, please visit the <a target="_blank"
+        href="https://datatables.net">official DataTables documentation</a>.</p> -->
+    <button type="button" class="btn btn-primary" (click)="addDataStaff()">
+        <i class="fa fa-plus"></i>Thêm nhân viên
+    </button>
+    &nbsp;
+    <button type="button" (click)="deleteDataStaff()" class="btn btn-danger">
+        <i class="fa fa-times"></i>&nbsp;&nbsp;Xóa nhân viên
+    </button>
+    &nbsp;
+    <button (click)="refreshAllData()" type="button" class="btn btn-info">
+        <i class="fa fa-refresh"></i>Làm mới
+    </button>
+    <!-- <div class="space pt-2 pb-2"></div> -->
+</div>
+
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div style="display: flex; justify-content: space-between;">
+            <div style="display: flex;">
+                <button type="button" style="height: 36px;" class="btn btn-primary" (click)="showListStaffWasDeleted()">
+                    <i class="fa fa-trash text-whire"></i>&nbsp;&nbsp;Lịch sử xóa ({{historyDelete}})
+                </button>
+                <a id="openModalListDeleted" [hidden]="true" data-toggle="modal" data-target="#staffWasDeleted"></a>
+                &nbsp;
+                &nbsp;
+                <div class="dropdown show">
+                    <a class="btn btn-info dropdown-toggle text-white" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-filter"></i>&nbsp;&nbsp;Sắp xếp theo
+                    </a>
+
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a style="cursor: pointer;" class="dropdown-item" (click)="onLoadDataStaff()">Mặc định</a>
+                        <a style="cursor: pointer;" class="dropdown-item" (click)="sortAlphabetFullName()">Tên
+                            nhân viên A-Z</a>
+                        <a style="cursor: pointer;" class="dropdown-item" (click)="sortAlphabetFullNameReverse()">Tên
+                            nhân viên Z-A</a>
+                        <!-- <a style="cursor: pointer;" class="dropdown-item" (click)="sortAgeNumber()">Tuổi tăng dần</a> -->
+                    </div>
+                </div>
+            </div>
+            <form class="form-inline float-right" (ngSubmit)="searchDataStaff()">
+                <input style="width: 220px" class="form-control" autofocus type="search"
+                    placeholder="Tìm kiếm theo họ và tên..." aria-label="Search" id="keywordSearch" name="keywordSearch"
+                    [(ngModel)]="keywordSearch">
+                <!-- &nbsp;
+                <button class="btn btn-secondary" type="submit">Search</button> -->
+            </form>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <div class="table-responsive scroll-table">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th style="width: 8%;"></th>
+                        <th style="width: 20%;">Tên nhân viên&nbsp;&nbsp;
+                            <i (click)="sortAlphabetColumn()" class="fa fa-sort"></i>
+                        </th>
+                        <th style="width: 15%;">Tên đăng nhập&nbsp;&nbsp;
+                            <i class="fa fa-sort" (click)="sortByUserName()"></i>
+                        </th>
+                        <th style="width: 12%;">Giới tính
+                        </th>
+                        <th style="width: 10%;">Tuổi&nbsp;&nbsp;<i (click)="sortNumberAgeColumn()"
+                                class="fa fa-sort"></i></th>
+                        <th style="width: 15%;text-align: center;">Trạng thái</th>
+                        <th style="width: 10%;text-align: center;">Tác vụ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="mytable"
+                        *ngFor="let item of listStaff | paginate: {itemsPerPage: pageSize, currentPage: page}">
+                        <td>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="checkbox-round" name="checkcategory"
+                                    (change)="getCheckedOnList($event, item?.id)">
+                            </div>
+                        </td>
+                        <td>{{item?.account?.fullName.length > 25 ? item?.account?.fullName.substring(0,
+                            20).concat('...') : item?.account?.fullName}}</td>
+                        <td>{{item?.account?.username.length > 25 ? item?.account?.username.substring(0,
+                            20).concat('...') : item?.account?.username}}</td>
+                        <td>
+                            <span *ngIf="item?.gender == true">
+                                Nam&nbsp;&nbsp;<i class="fa fa-mars text-primary"></i>
+                            </span>
+                            <span *ngIf="item?.gender == false">
+                                Nữ&nbsp;&nbsp;<i class="fa fa-venus text-danger"></i>
+                            </span>
+                        </td>
+                        <td style="direction: rtl;text-align: right;">
+                            {{
+                            item?.age == 0
+                            ? "Chưa sửa"
+                            : item?.age
+                            }}
+                        </td>
+                        <td style="text-align: center;">
+                            <span *ngIf="item?.status == 1" class="badge rounded-pill bg-warning badge-status">
+                                Mới tạo chưa sửa
+                            </span>
+                            <span *ngIf="item?.status == 2" class="badge rounded-pill bg-primary badge-status">
+                                Đã chỉnh sửa
+                            </span>
+                            <span *ngIf="item?.status == 3" class="badge rounded-pill bg-success badge-status">
+                                Đang hoạt động
+                            </span>
+                            <span *ngIf="item?.status == 4" class="badge rounded-pill bg-danger badge-status">
+                                Tài khoản bị khóa
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <a (click)="detailDataStaff(item?.id)" data-toggle="modal" data-target="#detailStaff"><i
+                                    class="fa fa-eye text-success"></i></a>
+                            &nbsp;&nbsp;
+                            <a (click)="updateStaffData(item?.id)" data-toggle="modal" data-target="#updateStaff"><i
+                                    class="fa fa-edit text-primary"></i></a>
+                            &nbsp;&nbsp;
+                            <!-- <a data-toggle="modal" data-target="#deleteStaff"><i
+                                    class="fa fa-trash text-danger"></i></a>
+                            <a id="openModalButton" [hidden]="true" data-toggle="modal"
+                                data-target="#deleteCategory"></a> -->
+                            <a (click)="deleteStaffDataById(item?.id)"><i class="fa fa-trash text-danger"></i></a>
+                            <a id="openModalButton" [hidden]="true" data-toggle="modal" data-target="#deleteStaff"></a>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br />
+        <!-- <div class="bottom-paginate">
+            <div class="form-group row col-sm-3 d-inline-flex">
+                <span class="col-sm-4 pt-2">Hiển thị: </span>
+                <select class="form-control col-sm-4 border border-primary" placeholder="Select page"
+                    (change)='onOptionsSelected($event)' id="exampleFormControlSelect1">
+                    <option *ngFor="let pageSize of pageSizeOptions" [value]="pageSize">{{pageSize}}</option>
+                </select>
+            </div>
+            <nav class="col-sm-9">
+                <ul class="pagination float-right">
+                    <li class="pt-1">
+                        <span for="inputPassword" class="col-sm-8">Hiển thị {{pageSize}} trên
+                            {{pageLength}} bản ghi</span>
+                    </li>
+                    <li>
+                        <pagination-controls (pageChange)="page = $event" previousLabel="Trang trước"
+                            nextLabel="Trang tiếp" screenReaderPaginationLabel="Pagination" screenReaderPageLabel="page"
+                            screenReaderCurrentLabel="You're on page">
+                        </pagination-controls>
+                    </li>
+                </ul>
+            </nav>
+        </div> -->
+        <div class="d-flex justify-content-between">
+            <div class="col-md-5 flex-items float-left ml-2">
+                <div class="form-group row col-md-7 d-inline-flex">
+                    <span class="col-md-5 pt-2">Hiển thị: </span>
+                    <select class="form-control col-sm-5 border border-primary" placeholder="Select page"
+                        (change)='onOptionsSelected($event)' id="exampleFormControlSelect1">
+                        <option *ngFor="let pageSize of pageSizeOptions" [value]="pageSize">{{pageSize}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-7 flex-items float-right ml-3">
+                <div class="form-group row col-md-12 d-inline-flex">
+                    <span for="inputPassword" class="show-page-text col-md-4">Hiển thị {{pageSize}} trên
+                        {{pageLength}} bản ghi</span>
+                    <pagination-controls (pageChange)="page = $event" previousLabel="Trang trước" nextLabel="Trang tiếp"
+                        screenReaderPaginationLabel="Pagination" screenReaderPageLabel="page"
+                        screenReaderCurrentLabel="You're on page" [maxSize]="5">
+                    </pagination-controls>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="updateStaff" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Chỉnh sửa nhân viên</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formUpdate" (ngSubmit)="submitDataStaff()">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Mã tài khoản </label>
+                            <input type="text" readonly class="form-control" name="accountId" id="accountId"
+                                formControlName="accountId" placeholder="Mã tài khoản">
+
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Địa chỉ <span class="important-input">*</span></label>
+                            <input maxlength="60" type="text" class="form-control" required name="address" id="address"
+                                formControlName="address"
+                                [ngClass]="{ 'is-invalid': formUpdate.controls.address.errors }">
+                            <div *ngIf="formUpdate.controls.address.errors" class="invalid-feedback">
+                                <div *ngIf="formUpdate.controls.address.errors?.required">Địa chỉ không để trống!
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Ngày sinh <span
+                                    class="important-input">*</span></label>
+                            <!-- <input type="text" class="form-control" name="birthDay" id="birthDay"
+                                formControlName="birthDay" > -->
+                            <input type="date" class="form-control" required (change)="changeBirthdayRenderAge($event)"
+                                name="birthDay" id="datepicker" formControlName="birthDay" min="1990-01-01"
+                                max="2030-12-31" [ngClass]="{ 'is-invalid': formUpdate.controls.birthDay.errors }" />
+                            <div *ngIf="formUpdate.controls.birthDay.errors" class="invalid-feedback">
+                                <div *ngIf="formUpdate.controls.birthDay.errors?.required">Ngày sinh không để trống!
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Tuổi <span class="important-input">*</span></label>
+                            <input type="number" class="form-control" readonly min="18" max="100" name="age" id="age"
+                                formControlName="age">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12 row">
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1">Giới tính <span
+                                        class="important-input">*</span></label>
+                                <select (change)="changeGender($event)" required class="form-control"
+                                    formControlName="gender">
+                                    <option value="" disabled>-- Chọn giới tính --</option>
+                                    <option *ngFor="let gd of listGender" [value]="gd.id">{{gd.value}}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1">Tỉnh/Thành phố</label>
+                                <select formControlName="provinceId" required (change)="changeProvince($event)"
+                                    class="form-control">
+                                    <option value="" disabled>-- Chọn tỉnh/thành phố --</option>
+                                    <option *ngFor="let province of listProvince" [value]="province.id">
+                                        {{ province?.name }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1">Quận/Huyện</label>
+                                <select formControlName="districtId" required (change)="changeDistrict($event)"
+                                    class="form-control">
+                                    <option value="" disabled>-- Chọn quận/huyện --</option>
+                                    <option *ngFor="let district of listDistrict" [value]="district.id">
+                                        {{ district?.name }}
+                                    </option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="exampleFormControlInput1">Mô tả</label>
+                            <textarea formControlName="description" class="form-control" name="description"
+                                maxlength="800" id="description" rows="5"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-edit"></i>
+                            Chỉnh sửa</button>
+                        &nbsp;
+                        <!-- <button type="reset" class="btn btn-secondary">Reset</button> -->
+                        <button type="button" tabindex="22" id="cancelUpdate" class="btn btn-secondary"
+                            data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div hidden class="form-group">
+                        <button type="button" class="btn btn-secondary" #closeBtn data-dismiss="modal">Đóng</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="detailStaff" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Chi tiết nhân viên</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formDetail">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Họ và tên </label>
+                            <input type="text" readonly required class="form-control" name="fullName" id="fullName"
+                                formControlName="fullName" placeholder="Họ và tên">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Email</label>
+                            <input type="text" readonly class="form-control" required name="email" id="email"
+                                formControlName="email">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Số điện thoại</label>
+                            <!-- <input type="text" class="form-control" name="birthDay" id="birthDay"
+                                formControlName="birthDay" > -->
+                            <input type="text" readonly class="form-control" required name="phone" id="phone"
+                                formControlName="phone" />
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Tên đăng nhập</label>
+                            <input type="text" class="form-control" required readonly name="username" id="username"
+                                formControlName="username">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Mã tài khoản </label>
+                            <input type="text" readonly required class="form-control" name="accountId" id="accountId"
+                                formControlName="accountId" placeholder="Mã tài khoản">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Địa chỉ </label>
+                            <input type="text" readonly class="form-control" required name="address" id="address"
+                                formControlName="address">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Ngày sinh</label>
+                            <!-- <input type="text" class="form-control" name="birthDay" id="birthDay"
+                                formControlName="birthDay" > -->
+                            <input type="date" readonly class="form-control" required
+                                (change)="changeBirthdayRenderAge($event)" name="birthDay" id="datepicker"
+                                formControlName="birthDay" min="1990-01-01" max="2030-12-31" />
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Tuổi</label>
+                            <input type="number" class="form-control" required readonly min="18" max="100" name="age"
+                                id="age" formControlName="age">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Giới tính</label>
+                            <select readonly (change)="changeGender($event)" required class="form-control"
+                                formControlName="gender">
+                                <option value="" disabled>-- Chọn giới tính --</option>
+                                <option *ngFor="let gd of listGender" [value]="gd.id">{{gd.value}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Tỉnh/Thành phố</label>
+                            <select readonly formControlName="provinceId" required (change)="changeProvince($event)"
+                                class="form-control">
+                                <option value="" disabled>-- Chọn tỉnh/thành phố --</option>
+                                <option *ngFor="let province of listProvince" [value]="province.id">
+                                    {{ province?.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Quận/Huyện</label>
+                            <select readonly formControlName="districtId" required (change)="changeDistrict($event)"
+                                class="form-control">
+                                <option value="" disabled>-- Chọn quận/huyện --</option>
+                                <option *ngFor="let district of listDistrict" [value]="district.id">
+                                    {{ district?.name }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Ngày tạo </label>
+                            <input type="text" readonly required class="form-control" name="createdDate"
+                                id="createdDate" formControlName="createdDate" placeholder="Họ và tên">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Người tạo</label>
+                            <input type="text" readonly class="form-control" required name="createdBy" id="createdBy"
+                                formControlName="createdBy">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Ngày chỉnh sửa</label>
+                            <!-- <input type="text" class="form-control" name="birthDay" id="birthDay"
+                                formControlName="birthDay" > -->
+                            <input type="text" readonly class="form-control" required name="modifiedDate"
+                                id="modifiedDate" formControlName="modifiedDate" />
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Người chỉnh sửa</label>
+                            <input type="text" class="form-control" required readonly name="modifiedBy" id="modifiedBy"
+                                formControlName="modifiedBy">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="exampleFormControlInput1">Mô tả</label>
+                            <textarea readonly formControlName="description" class="form-control" name="description"
+                                id="description" rows="5"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <!-- <button type="submit" tabindex="21" [disabled]="!formUpdate.valid"
+                            class="btn btn-primary"><i class="fa fa-edit"></i>
+                            Chỉnh sửa</button>
+                        &nbsp; -->
+                        <!-- <button type="reset" class="btn btn-secondary">Reset</button> -->
+                        <button type="button" tabindex="22" id="cancelUpdate" class="btn btn-secondary"
+                            data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div hidden class="form-group">
+                        <button type="button" class="btn btn-secondary" #closeBtn data-dismiss="modal">Đóng</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="deleteStaff" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Xác nhận xóa nhân viên</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formDetail">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Họ và tên </label>
+                            <input type="text" readonly required class="form-control" name="fullName" id="fullName"
+                                formControlName="fullName" placeholder="Họ và tên">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Email</label>
+                            <input type="text" readonly class="form-control" required name="email" id="email"
+                                formControlName="email">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Số điện thoại</label>
+                            <!-- <input type="text" class="form-control" name="birthDay" id="birthDay"
+                                formControlName="birthDay" > -->
+                            <input type="text" readonly class="form-control" required name="phone" id="phone"
+                                formControlName="phone" />
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Tên đăng nhập</label>
+                            <input type="text" class="form-control" required readonly name="username" id="username"
+                                formControlName="username">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Mã tài khoản </label>
+                            <input type="text" readonly required class="form-control" name="accountId" id="accountId"
+                                formControlName="accountId" placeholder="Mã tài khoản">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Địa chỉ</label>
+                            <input type="text" readonly class="form-control" required name="address" id="address"
+                                formControlName="address">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Ngày sinh</label>
+                            <!-- <input type="text" class="form-control" name="birthDay" id="birthDay"
+                                formControlName="birthDay" > -->
+                            <input type="date" readonly class="form-control" required
+                                (change)="changeBirthdayRenderAge($event)" name="birthDay" id="datepicker"
+                                formControlName="birthDay" min="1990-01-01" max="2030-12-31" />
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="exampleFormControlInput1">Tuổi</label>
+                            <input type="number" class="form-control" required readonly min="18" max="100" name="age"
+                                id="age" formControlName="age">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12 row">
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1">Giới tính</label>
+                                <select readonly (change)="changeGender($event)" required class="form-control"
+                                    formControlName="gender">
+                                    <option value="" disabled>-- Chọn giới tính --</option>
+                                    <option *ngFor="let gd of listGender" [value]="gd.id">{{gd.value}}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1">Tỉnh/Thành phố</label>
+                                <select readonly formControlName="provinceId" required (change)="changeProvince($event)"
+                                    class="form-control">
+                                    <option value="" disabled>-- Chọn tỉnh/thành phố --</option>
+                                    <option *ngFor="let province of listProvince" [value]="province.id">
+                                        {{ province?.name }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1">Quận/Huyện</label>
+                                <select readonly formControlName="districtId" required (change)="changeDistrict($event)"
+                                    class="form-control">
+                                    <option value="" disabled>-- Chọn quận/huyện --</option>
+                                    <option *ngFor="let district of listDistrict" [value]="district.id">
+                                        {{ district?.name }}
+                                    </option>
+                                </select>
+                            </div>
+                            <!-- <div class="col-md-3">
+                                <span *ngIf="item?.status == 1" class="badge rounded-pill bg-warning badge-status">
+                                    Mới tạo chưa sửa
+                                </span>
+                                <span *ngIf="item?.status == 2" class="badge rounded-pill bg-primary badge-status">
+                                    Đã chỉnh sửa
+                                </span>
+                                <span *ngIf="item?.status == 3" class="badge rounded-pill bg-success badge-status">
+                                    Đang hoạt động
+                                </span>
+                                <span *ngIf="item?.status == 4" class="badge rounded-pill bg-danger badge-status">
+                                    Tài khoản bị khóa
+                                </span>
+                            </div> -->
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="exampleFormControlInput1">Mô tả</label>
+                            <textarea readonly formControlName="description" class="form-control" name="description"
+                                id="description" rows="5"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button (click)="continueDeleteData(staffId)" class="btn btn-danger"><i class="fa fa-times"></i>
+                            Tiếp tục xóa</button>
+                        &nbsp;
+                        <!-- <button type="reset" class="btn btn-secondary">Reset</button> -->
+                        <button type="button" tabindex="22" id="cancelDelete" class="btn btn-secondary"
+                            data-dismiss="modal">Đóng</button>
+                    </div>
+                    <div hidden class="form-group">
+                        <button type="button" class="btn btn-secondary" #closeBtn data-dismiss="modal">Đóng</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="staffWasDeleted" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="d-flex">
+                    <button type="button" class="btn btn-primary" (click)="restoreMultiDataStaff()">
+                        <i class="fa fa-check-square-o"></i>Khôi phục
+                    </button>
+                    &nbsp;
+                    <button type="button" id="closeListDeleted" class="btn btn-info" data-dismiss="modal" aria-label="Close">
+                        <i class="fa fa-times"></i>Thoát
+                    </button>
+                </div>
+                <!-- <h5 class="modal-title" id="exampleModalLabel">Danh sách nhân viên đã xóa</h5> -->
+                <!-- <button type="button" class="close" >
+                    <span aria-hidden="true">&times;</span>
+                </button> -->
+
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive scroll-table">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <!-- <th style="width: 8%;"></th> -->
+                                <th style="width: 20%;">Tên nhân viên&nbsp;&nbsp;
+                                    <i (click)="sortAlphabetColumn()" class="fa fa-sort"></i>
+                                </th>
+                                <th style="width: 15%;">Tên đăng nhập&nbsp;&nbsp;
+                                    <i class="fa fa-sort" (click)="sortByUserName()"></i>
+                                </th>
+                                <th style="width: 12%;">Giới tính
+                                </th>
+                                <th style="width: 10%;">Tuổi&nbsp;&nbsp;<i (click)="sortNumberAgeColumn()"
+                                        class="fa fa-sort"></i></th>
+                                <th style="width: 15%;text-align: center;">Trạng thái</th>
+                                <th style="width: 10%;text-align: center;">Tác vụ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="mytable" *ngFor="let item of listStaffWasDeleted">
+                                <!-- <td>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="checkbox-round" name="checkcategory"
+                                            (change)="getCheckedOnList($event, item?.id)">
+                                    </div>
+                                </td> -->
+                                <td>{{item?.account?.fullName.length > 25 ? item?.account?.fullName.substring(0,
+                                    20).concat('...') : item?.account?.fullName}}</td>
+                                <td>{{item?.account?.username.length > 25 ? item?.account?.username.substring(0,
+                                    20).concat('...') : item?.account?.username}}</td>
+                                <td>
+                                    <span *ngIf="item?.gender == true">
+                                        Nam&nbsp;&nbsp;<i class="fa fa-mars text-primary"></i>
+                                    </span>
+                                    <span *ngIf="item?.gender == false">
+                                        Nữ&nbsp;&nbsp;<i class="fa fa-venus text-danger"></i>
+                                    </span>
+                                </td>
+                                <td style="direction: rtl;text-align: right;">
+                                    {{
+                                    item?.age == 0
+                                    ? "Chưa sửa"
+                                    : item?.age
+                                    }}
+                                </td>
+                                <td style="text-align: center;">
+                                    <span *ngIf="item?.deleteStatus == true"
+                                        class="badge rounded-pill bg-danger badge-status">
+                                        Đã xóa
+                                    </span>
+
+                                </td>
+                                <td style="text-align: center;">
+                                    <a (click)="restoreStaffDataById(item?.id)"><i
+                                            class="fa fa-check-square-o text-success"></i></a>
+                                    <!-- <a id="openModalButton" [hidden]="true" data-toggle="modal"
+                                        data-target="#deleteStaff"></a> -->
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

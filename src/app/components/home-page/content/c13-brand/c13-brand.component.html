@@ -1,0 +1,459 @@
+<!-- HEADER INCLUDE: Add button, delete button and refresh button -->
+<div class="d-flex pb-2">
+    <button type="button" (click)="openModalAddBrand()" class="btn btn-primary">
+        <i class="fa fa-plus"></i>&nbsp;&nbsp;Thêm thương hiệu
+    </button>
+    <a id="openModalAdd" [hidden]="true" data-toggle="modal" data-target="#addBrand"></a>
+    &nbsp;
+    <button type="button" (click)="deleteDataBrand()" class="btn btn-danger">
+        <i class="fa fa-times"></i>&nbsp;&nbsp;Xóa thương hiệu
+    </button>
+    &nbsp;
+    <button (click)="refreshAllData()" type="button" class="btn btn-info">
+        <i class="fa fa-refresh"></i>Làm mới
+    </button>
+    &nbsp;
+    <div class="dropdown show">
+        <a class="btn btn-info dropdown-toggle text-white" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-filter"></i>&nbsp;&nbsp;Sắp xếp theo
+        </a>
+
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a style="cursor: pointer;" class="dropdown-item" (click)="refreshAllData()">Mặc định</a>
+            <a style="cursor: pointer;" class="dropdown-item" (click)="sortAlphabetBrandName()">Tên
+                thương hiệu A-Z</a>
+            <a style="cursor: pointer;" class="dropdown-item" (click)="sortAlphabetBrandNameReverse()">Tên
+                thương hiệu Z-A</a>
+            <a style="cursor: pointer;" class="dropdown-item" (click)="sortCreatedDateOption()">Ngày tạo
+                tăng dần</a>
+            <a style="cursor: pointer;" class="dropdown-item" (click)="sortUpdatedDateOption()">Ngày cập
+                nhật tăng dần</a>
+        </div>
+    </div>
+</div>
+<!-- END HEADER INCLUDE: Add button, delete button and refresh button -->
+
+<!-- DATA TABLE SHOW DATA AND HANDLE -->
+<div class="card shadow">
+    <!-- HEADER CARD TABLE -->
+    <div class="card-header">
+        <div class="d-flex justify-content-between">
+            <div style="margin-left: -6px;">
+                <h5 id="exampleModalLabel" style="color: #09133A;">Quản lý thương hiệu</h5>
+            </div>
+            <!-- SEARCHING FORM INPUT -->
+            <form class="form-inline float-right" (ngSubmit)="searchDataCatalogue()">
+                <input style="width: 220px" id="keywordSearch" class="form-control" autofocus type="search"
+                    (keyup)="searchDataCatalogue()" placeholder="Tìm kiếm theo tên thương hiệu..." aria-label="Search"
+                    name="keywordSearch" [(ngModel)]="keywordSearch">
+            </form>
+            <!-- END SEARCHING FORM INPUT -->
+        </div>
+    </div>
+    <!-- END HEADER CARD TABLE -->
+
+    <!-- BODY CARD TABLE -->
+    <div class="card-body" style="height: 300px;">
+        <div class="table-responsive scroll-table" style="height: 230px;">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th style="width: 8%;"></th>
+                        <th style="width: 20%;">Tên thương hiệu&nbsp;&nbsp;
+                            <i (click)="sortAlphabetColumn()" class="fa fa-sort"></i>
+                        </th>
+                        <th style="width: 20%;">SeoURL&nbsp;&nbsp;
+                            <i (click)="sortAlphabetColumn()" class="fa fa-sort"></i>
+                        </th>
+                        <th style="width: 20%;text-align: center;">Ngày tạo&nbsp;&nbsp;
+                            <i (click)="sortDateColumn()" class="fa fa-sort"></i>
+                        </th>
+                        <th style="width: 20%;text-align: center;">Ngày chỉnh sửa&nbsp;&nbsp;
+                            <i (click)="sortDateColumn()" class="fa fa-sort"></i>
+                        </th>
+                        <th style="width: 12%;text-align: center;">Tác vụ</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr id="mytable"
+                        *ngFor="let item of listBrands | paginate: {itemsPerPage: pageSize, currentPage: page, totalItems: pageLength}">
+                        <td>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="checkbox-round" name="checkcategory"
+                                    (change)="getCheckedOnList($event, item?.id)">
+                            </div>
+                        </td>
+                        <td>
+                            {{
+                            item?.name == "" || item?.name == null || item?.name.length == 0
+                            ? 'Dữ liệu trống'
+                            : item?.name.length > 15
+                            ? item?.name.substring(0, 15).concat('...')
+                            : item?.name
+                            }}
+                        </td>
+                        <td>
+                            {{
+                            item?.code == "" || item?.code == null || item?.code.length == 0
+                            ? 'Dữ liệu trống'
+                            : item?.code.length > 15
+                            ? item?.name.substring(0, 15).concat('...')
+                            : item?.name
+                            }}
+                        </td>
+                        <td style="text-align: center;">
+                            {{
+                            item?.createdDate == '' || item?.createdDate == null
+                            ? 'Đã được tạo trống'
+                            : item?.createdDate | date:"dd-MM-yyyy HH:mm"
+                            }}
+                        </td>
+                        <td style="text-align: center;">
+                            {{
+                            item?.modifiedDate == item?.createdDate
+                            ? 'Chưa được cập nhật'
+                            : item?.modifiedDate
+                            | date:"dd-MM-yyyy HH:mm"
+                            }}
+                        </td>
+                        <td style="text-align: center;">
+                            <a (click)="showDetailData(item?.code)"><i class="fa fa-eye text-success"></i></a>
+                            <a id="openModalDetail" [hidden]="true" data-toggle="modal" data-target="#detailBrand"></a>
+                            &nbsp;&nbsp;
+                            <a (click)="updateBrandData(item?.code)"><i class="fa fa-edit text-primary"></i></a>
+                            <a id="openModalUpdate" [hidden]="true" data-toggle="modal" data-target="#updateBrand"></a>
+                            &nbsp;&nbsp;
+                            <a (click)="deleteBrandDataById(item?.id)"><i class="fa fa-trash text-danger"></i></a>
+                            <a id="openModalButton" [hidden]="true" data-toggle="modal" data-target="#deleteBrand"></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div *ngIf="listBrands.length == 0">
+                <!-- <img src="https://cdn.dribbble.com/users/2382015/screenshots/6065978/no_result_still_2x.gif?compress=1&resize=400x300" alt="" srcset=""> -->
+                <div class="container h-100">
+                    <div class="row align-items-center h-100">
+                        <div class="col-6 mx-auto">
+                            <!-- <img width="100px" height="100px" src="https://digitalcollections.newmanstudies.org/assets/images/result_not_found.png" alt="" srcset=""> -->
+                            <div class="text-center bg-white" style="padding-top: 50px;">
+                                Oops...! Không có kết quả nào được tìm thấy
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END LIST TABLE DATA -->
+        <div class="pt-2"></div>
+        <!-- PAGiNATION DATA TABLE -->
+        <div class="d-flex">
+            <div class="col-md-5 d-flex mr-auto pt-2">
+                <span class="col-md-3" style="margin-left: -20px;">Hiển thị: </span>
+                <select style="height: 33px;margin-top:-6px;margin-left: -28px;border: 1px solid #F1F1F1;"
+                    class="form-control col-sm-2 border" placeholder="Select page" (change)='onOptionsSelected($event)'
+                    id="exampleFormControlSelect1">
+                    <option *ngFor="let pageSize of pageSizeOptions" [value]="pageSize">{{pageSize}}</option>
+                </select>
+            </div>
+            <div class="d-flex">
+                <span for="inputPassword" class="show-page-text col-md-10">Hiển thị {{pageSize}} trên
+                    {{pageLength}} bản ghi</span>
+                <form [formGroup]="formGoToPage" (ngSubmit)="submitGoToPage()">
+                    <input type="text" formControlName="numberPage" class="goto-box-page form-control" value="{{page}}">
+                </form>
+            </div>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <div>
+                <pagination-controls (pageChange)="onPageChange($event)" previousLabel="" nextLabel=""
+                    screenReaderPaginationLabel="Pagination" screenReaderPageLabel="page"
+                    screenReaderCurrentLabel="You're on page" [maxSize]="6" boundary-links="true">
+                </pagination-controls>
+            </div>
+        </div>
+        <!-- END PAGiNATION DATA TABLE -->
+    </div>
+    <!-- BODY CARD TABLE -->
+</div>
+<!-- END DATA TABLE SHOW DATA AND HANDLE -->
+
+<!-- MODAL ADD DATA -->
+<div class="modal fade" id="addBrand" role="dialog" tab-index="-1" aria-labelledby="exampleModalLabel" data-backdrop="static"
+    data-keyboard="false" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm thương hiệu</h5>
+                <button type="button" class="close" (click)="confirmBeforeCloseAddBrand()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formData" (ngSubmit)="submitDataCategory()">
+                    <div class="form-group">
+                        <label for="exampleFormControlInput1">Tên thương hiệu <span
+                                class="important-input">*</span></label>
+                        <input type="text" tab-index="1" #input autofocus="autofocus" required maxlength="35" class="form-control"
+                            (keyup)="renderForCodeSEO()" formControlName="name" name="name" id="nameAddBrand"
+                            placeholder="Tên thương hiệu"
+                            [ngClass]="{
+                                'is-valid': (formData.controls?.name?.valid && (formData.controls?.name?.touched)),
+                                'is-invalid': (formData.controls?.name?.invalid && (formData.controls?.name?.touched))}">
+                        <div *ngIf="formData.controls.name.errors" class="invalid-feedback">
+                            <div *ngIf="formData.controls.name.errors?.required">Tên thương hiệu không để trống!
+                            </div>
+                            <div *ngIf="formData.controls.name.errors?.largeName">Tên thương hiệu không quá 30 ký
+                                tự!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlInput1">Code</label>
+                        <input type="text" readonly formControlName="code" tab-index="2" class="form-control"
+                            name="code" id="code">
+                    </div>
+                    <div class="form-group text-right">
+                        <button (click)="confirmBeforeCloseAddBrand()" tab-index="3" type="button"
+                            class="btn btn-secondary">Đóng</button>
+                        &nbsp;
+                        <button type="submit" tab-index="4" (keydown.Tab)="onKey($event);false;"
+                            class="btn btn-primary"><i class="fa fa-plus"></i>
+                            Thêm</button>
+                        <button hidden id="cancelSubmit" data-dismiss="modal" #closeBtn></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MODAL ADD DATA -->
+
+<!-- MODAL DETAIL DATA -->
+<div class="modal fade bd-example-modal-lg" id="detailBrand" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Chi tiết thương hiệu</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formDetail">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="exampleFormControlInput1">Tên thương hiệu</label>
+                            <!-- (keyup)="renderForCodeSEO()" -->
+                            <input type="text" class="form-control" readonly formControlName="name" name="name"
+                                id="name" placeholder="Tên thương hiệu">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="exampleFormControlInput1">SeoURL</label>
+                            <input type="text" formControlName="code" readonly class="form-control" name="code"
+                                id="code">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="exampleFormControlInput1">Ngày tạo</label>
+                            <input type="text" formControlName="createdDate" readonly class="form-control"
+                                name="createdDate" id="createdDate">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="exampleFormControlInput1">Người tạo</label>
+                            <input type="text" formControlName="createdBy" readonly class="form-control"
+                                name="createdBy" id="createdBy">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="exampleFormControlInput1">Ngày chỉnh sửa</label>
+                            <input type="text" formControlName="modifiedDate" readonly class="form-control"
+                                name="modifiedDate" id="modifiedDate">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="exampleFormControlInput1">Người chỉnh sửa</label>
+                            <input type="text" formControlName="modifiedBy" readonly class="form-control"
+                                name="modifiedBy" id="modifiedBy">
+                        </div>
+                    </div>
+                    <div style="display: flex;justify-content: space-between;">
+                        <div><label for="exampleFormControlInput1">Các sản phẩm thuộc thương hiệu
+                                <strong>{{brandNameDetail}}</strong></label></div>
+                        <div><a (click)="closeModalDetail()" style="color: blue;text-decoration: underline;"
+                                routerLink="/product">Xem chi tiết</a></div>
+                    </div>
+                    <div style="scroll-behavior: smooth; width: 100%; height: 200px;overflow: scroll;">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Danh mục</th>
+                                    <th>Thương hiệu</th>
+                                    <th>Giá</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of listProducts">
+                                    <td data-toggle="tooltip" data-placement="top" title="{{ item?.productName }}">
+                                        {{
+                                        item?.productName.length > 20
+                                        ? item?.productName.substring(0, 20) + "..."
+                                        : item?.productName
+                                        }}
+                                    </td>
+                                    <td>{{ item?.category?.name }}</td>
+                                    <td>{{ item?.brand?.name }}</td>
+                                    <td>{{ item?.price + " VNĐ"}}</td>
+                                    <td>
+                                        <span *ngIf="item?.status == 1"
+                                            class="badge rounded-pill bg-success badge-status">
+                                            Hàng mới nhập
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- <br> -->
+                    <div hidden class="form-group">
+                        <button type="button" class="btn btn-secondary" id="cancelDetail" #closeBtn
+                            data-dismiss="modal">Đóng</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MODAL DETAIL DATA -->
+
+<!-- MODAL UPDATE DATA -->
+<div class="modal fade" id="updateBrand" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Chỉnh sửa danh mục</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="formUpdate" (ngSubmit)="saveUpdateDataBrand()">
+                    <div class="form-group">
+                        <label for="exampleFormControlInput1">Tên danh mục <span
+                                class="important-input">*</span></label>
+                        <!-- (keyup)="renderForCodeSEO()" -->
+                        <input type="text" tabindex="0" autofocus required class="form-control" formControlName="name"
+                            name="name" id="name" placeholder="Tên danh mục" (keyup)="renderForCodeSEOUpdate()"
+                            [ngClass]="{ 'is-invalid': formUpdate.controls.name.errors }" autofocus>
+                        <div *ngIf="formUpdate.controls.name.errors" class="invalid-feedback">
+                            <div *ngIf="formUpdate.controls.name.errors.required">Tên danh mục không để trống!</div>
+                            <div *ngIf="formUpdate.controls.name.errors?.largeName">Tên danh mục không quá 30 ký tự!
+                            </div>
+                            <div *ngIf="formUpdate.controls.name.errors?.smallName">Tên danh mục không nhỏ hơn 5 ký
+                                tự!</div>
+                            <div *ngIf="formUpdate.controls.name.errors?.alreadyExist">Tên danh mục đã tồn tại!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlInput1">Code</label>
+                        <input type="text" tabindex="-1" formControlName="code" readonly class="form-control"
+                            name="code" id="code">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" [disabled]="!formUpdate.valid" class="btn btn-primary"><i
+                                class="fa fa-edit"></i>
+                            Chỉnh sửa</button>
+                        &nbsp;
+                        <!-- <button type="reset" class="btn btn-secondary">Reset</button> -->
+                        <button type="button" id="cancelUpdate" class="btn btn-secondary"
+                            data-dismiss="modal">Đóng</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MODAL UPDATE DATA -->
+
+<!-- MODAL CONFIRM DELETE DATA -->
+<div class="modal fade bd-example-modal-lg" id="deleteBrand" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Xóa danh mục</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="display: flex;justify-content: space-between;">
+                    <div><label for="exampleFormControlInput1">Danh mục <strong>{{ brandName }}</strong>
+                            có {{listProducts.length}} sản phẩm</label></div>
+                    <div><a (click)="closeModalDetail()" style="color: blue;text-decoration: underline;"
+                            routerLink="/product">Xem chi tiết</a></div>
+                </div>
+                <div style="scroll-behavior: smooth; width: 100%; height: 150px;overflow: auto;white-space: nowrap;">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%;"></th>
+                                <th>Tên sản phẩm</th>
+                                <th>Danh mục</th>
+                                <th>Thương hiệu</th>
+                                <th>Giá</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of listProducts">
+                                <td>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="checkbox-round" name="checkproduct">
+                                    </div>
+                                </td>
+                                <td data-toggle="tooltip" data-placement="top" title="{{ item?.productName }}">
+                                    {{
+                                    item?.productName.length > 20
+                                    ? item?.productName.substring(0, 20) + "..."
+                                    : item?.productName
+                                    }}
+                                </td>
+                                <td>{{ item?.category?.name }}</td>
+                                <td>{{ item?.brand?.name }}</td>
+                                <td>{{ item?.price + " VNĐ"}}</td>
+                                <td>
+                                    <span *ngIf="item?.status == 1" class="badge rounded-pill bg-success badge-status">
+                                        Hàng mới nhập
+                                    </span>
+                                </td>
+                                <td>
+                                    <a><i class="fa fa-trash text-danger"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- <br> -->
+            </div>
+            <div class="modal-footer">
+                <div *ngIf="listProducts.length == 0">
+                    <button id="continueDelete" (click)="continueDeleteData(brandId)" class="btn btn-danger">Tiếp
+                        tục xóa danh mục {{brandName}}</button>
+                </div>
+                <button class="btn btn-info" data-dismiss="modal">Thoát</button>
+                <div hidden class="form-group">
+                    <button type="button" class="btn btn-secondary" id="cancelDelete" #closeBtn
+                        data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MODAL CONFIRM DELETE DATA -->

@@ -1,0 +1,20 @@
+<body>
+    <div class="container-scroller">
+        <app-menu></app-menu>
+        <div class="container-fluid page-body-wrapper">
+            <div class="row row-offcanvas row-offcanvas-right">
+                <!-- <app-theme-setting></app-theme-setting> -->
+                <app-right-sidebar></app-right-sidebar>
+                <!-- partial -->
+                <app-sidebar></app-sidebar>
+                <div class="content-wrapper">
+                    <router-outlet></router-outlet>
+                    <app-footer></app-footer>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-scale-multiple">
+        <p style="font-size: 20px; color: white">Loading...</p>
+    </ngx-spinner>
+</body>

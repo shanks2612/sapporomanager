@@ -1,0 +1,212 @@
+body {
+    padding-right: 0px;
+}
+
+.bottom-paginate {
+    display: flex;
+    justify-content: space-between;
+}
+
+.sort-intable {
+    justify-content: space-between;
+    display: flex;
+}
+
+.fas.fa-sort {
+    color: #DEE2E6;
+}
+
+.fas.fa-sort:hover {
+    color: #A1A1A1;
+}
+
+.important-input {
+    color: red;
+    font-size: 15px;
+    font-weight: 500;
+    padding-left: 5px;
+}
+
+th {
+    /* background-color: #145899; */
+    background-color: #17C4C1;
+    color: #FFFFFF;
+    height: 3% !important;
+}
+
+.card-header {
+    background-color: #E8EBF2;
+    /* height: 10%; */
+    height: 50px;
+}
+
+.card-body {
+    border: none;
+}
+
+/* #mytable:hover {
+    background-color: #E8E8E8;
+} */
+
+.modal-header {
+    background-color: #F1F1F1;
+}
+
+.modal-body {
+    background-color: #FFFFFF;
+}
+
+
+.badge-status {
+    color: #FFFFFF;
+    padding: 5px 10px 5px 10px;
+}
+
+.badge-status:hover {
+    cursor: pointer;
+}
+
+input[type=file] {
+    width: 100%;
+    color: transparent;
+}
+
+/* collapse-item active */
+.sidebar .nav-item .collapse .collapse-inner .collapse-item.active,
+.sidebar .nav-item .collapsing .collapse-inner .collapse-item.active {
+    background-color: #EAECF4;
+}
+
+.col-form-label {
+    font-size: 15px;
+}
+
+select[readonly] {
+    background: #eee;
+    cursor: no-drop;
+}
+
+select[readonly] option {
+    display: none;
+}
+
+a #dropdownMenuLink {
+    color: #FFFFFF;
+}
+
+.scroll-table {
+    scroll-behavior: smooth;
+    width: 100%;
+    height: 300px;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+figcaption,
+main {
+    display: block;
+}
+
+main {
+    overflow: hidden;
+}
+
+.bg-yellow {
+    background-color: #ffd600 !important;
+}
+
+.icon {
+    width: 3rem;
+    height: 3rem;
+}
+
+.icon i {
+    font-size: 2.25rem;
+}
+
+.icon-shape {
+    display: inline-flex;
+    padding: 12px;
+    text-align: center;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+}
+
+.show-page-text {
+    padding-top: 0.29rem !important;
+}
+
+/* .ng-star-inserted {
+    border: 1px solid #F1F1F1;
+} */
+
+.ngx-pagination li {
+    border: 1px solid #F1F1F1;
+    margin-right: 0 !important;
+}
+
+.ngx-pagination li .ng-star-inserted {
+    color: #727479 !important;
+}
+
+.ngx-pagination .current {
+    background-color: #F4F4F4 !important;
+    margin-right: 0 !important;
+}
+
+
+.show-for-sr .ng-star-inserted {
+    border: none;
+}
+
+.modal-header {
+    height: 50px !important;
+
+}
+
+.modal-title {
+    margin-top: -12px;
+}
+
+#mytable>td {
+    height: 35px !important;
+    padding: 0px 13px;
+}
+
+.custom-control .custom-checkbox {
+    padding-top: 6px;
+}
+
+#keywordSearch {
+    width: 220px;
+    margin-top: -5px;
+    height: 36px;
+    margin-right: -7px;
+}
+
+.goto-box-page {
+    text-align: center;
+    width: 40px;
+    height: 33px;
+    border: 1px solid #F1F1F1;
+}
+
+.modal .modal-dialog .modal-content .modal-body {
+    padding: 15px 10px;
+}
+
+.ng-select.custom {
+    border:0px;
+    min-height: 0px;
+    border-radius: 0;
+}
+.ng-select.custom .ng-select-container  {            
+    min-height: 0px;
+    border-radius: 0;
+}
+
+ng-select.ng-invalid.ng-touched .ng-select-container {
+    border-color: #dc3545;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 0 3px #fde6e8;
+}

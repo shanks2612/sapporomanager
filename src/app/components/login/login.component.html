@@ -1,0 +1,43 @@
+<body>
+    <div class="container">
+        <div class="row align-items-center justify-content-center vh-100">
+            <div class="col-md-7">
+                <img src="../../../assets/admin/images/Logo.svg" height="200px" class="w-50">
+                <h3>Yên tâm mua sắm ở sapporo nhận quà thỏa thích, siêu sale chờ đón.</h3>
+            </div>
+            <div class="col-md-5">
+                <form focusInvalidInput class="login-form" [formGroup]="formLogin" (ngSubmit)="submitDataLogin()">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" tabindex="1" formControlName="username" placeholder="Tên đăng nhập" 
+                        autofocus required #input
+                        [ngClass]="{
+                            'is-valid': (formLogin.controls?.username?.valid && (formLogin.controls?.username?.touched)),
+                            'is-invalid': (formLogin.controls?.username?.invalid && (formLogin.controls?.username?.touched))}">
+                        <!-- [ngClass]="{ 'is-invalid': formLogin.controls['username'].errors }" -->
+                        <div class="invalid-feedback" *ngIf="formLogin.controls['username'].invalid && (formLogin.controls['username'].dirty || formLogin.controls['username'].touched)">
+                            <div *ngIf="formLogin.controls['username'].errors?.required">Tên đăng nhập không để trống!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" tabindex="2" formControlName="password" placeholder="Mật khẩu" 
+                        required  [ngClass]="{
+                            'is-valid': (formLogin.controls?.password?.valid && (formLogin.controls?.password?.touched)),
+                            'is-invalid': (formLogin.controls?.password?.invalid && (formLogin.controls?.password?.touched))}">
+                        <div class="invalid-feedback" *ngIf="formLogin.controls['password'].invalid && (formLogin.controls['password'].dirty || formLogin.controls['password'].touched)" class="invalid-feedback">
+                            <div *ngIf="formLogin.controls['password'].errors?.required">Mật khẩu không để trống!
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" tabindex="2" class="btn btn-custom btn-lg btn-block">Đăng nhập</button>
+                    <div class="text-center pt-3 pb-3">
+                        <!-- <a href="#" class="">Quên mật khẩu?</a> -->
+                        <hr>
+                        <a href="/register" tabindex="3" (keydown.Tab)="onKey($event);false;" class="btn btn-success btn-lg mt-3">Tạo mới</a>
+                    </div>
+                </form>
+                <!-- <p class="pt-3 text-center"><b>Create a Page</b> for a celebrity, band or business.</p> -->
+            </div>
+        </div>
+    </div>
+</body>

@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Sapporo - Trang quản trị bán hàng</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="https://livedoor.blogimg.jp/tsukadar/imgs/3/e/3ee88ed4.jpg">
+  <!-- Bootstrap CSS CDN -->
+  <!-- Our Custom CSS -->
+  <!-- <link rel="stylesheet" href="assets/css/sb-admin-2.min.css"> -->
+  <!-- Custom fonts for this template-->
+  <link href="assets/admin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link type="text/html" rel="stylesheet" href="style.css">
+
+  <!-- plugins:css -->
+  <!-- <link rel="stylesheet" href="assets/admin/vendors/mdi/css/materialdesignicons.min.css"> -->
+  <link rel="stylesheet" href="assets/admin/vendors/simple-line-icons/css/simple-line-icons.css">
+  <link rel="stylesheet" href="assets/admin/vendors/flag-icon-css/css/flag-icon.min.css">
+  <link rel="stylesheet" href="assets/admin/vendors/css/vendor.bundle.base.css">
+  <!-- endinject -->
+  <!-- plugin css for this page -->
+  <link rel="stylesheet" href="assets/admin/vendors/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="assets/admin/vendors/jquery-bar-rating/fontawesome-stars.css">
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="assets/admin/css/style.css">
+  <!-- endinject -->
+  <!-- plugin css for this page -->
+  <link rel="stylesheet" href="assets/admin/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+
+  <!-- plugin css for this page -->
+  <link rel="stylesheet" href="assets/admin/vendors/icheck/skins/all.css">
+  <link rel="stylesheet" href="assets/admin/vendors/select2/select2.min.css">
+  <link rel="stylesheet" href="assets/admin/vendors/select2-bootstrap-theme/select2-bootstrap.min.css">
+  <!-- plugin css for this page -->
+  <link rel="stylesheet" href="assets/admin/vendors/jquery-toast-plugin/jquery.toast.min.css">
+
+  <!-- ======================================= WEB USER ============================== -->
+  <!-- ========================= CSS here ========================= -->
+  <link rel="stylesheet" href="assets/web/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="assets/web/css/LineIcons.3.0.css" />
+  <link rel="stylesheet" href="assets/web/css/tiny-slider.css" />
+  <link rel="stylesheet" href="assets/web/css/glightbox.min.css" />
+  <link rel="stylesheet" href="assets/web/css/main.css" />
+</head>
+<!-- For Google -->
+<meta name="description" content="SAPPORO Việt Nam chuyên cung cấp các mặt hàng thiết yếu cho tất cả mọi người." />
+<meta name="keywords" content="CÔNG TY TNHH SAPPORO VIỆT NAM" />
+<meta name="author" content="CÔNG TY TNHH SAPPORO VIỆT NAM" />
+<meta name="copyright" content="CÔNG TY TNHH SAPPORO VIỆT NAM" />
+<meta name="application-name" content="Sapporo VietNam" />
+
+<!-- For Facebook -->
+<meta property="og:title" content="CÔNG TY TNHH SAPPORO VIỆT NAM" />
+<meta property="og:type" content="article" />
+<!-- <meta property="og:image"
+  content="https://hoctienganhphanxa.com/api/p7rolie/uploads/images/2020-12-01T06:59:08.130Z-ms_banner_img1.jpg" /> -->
+<meta property="og:url" content="https://sapporo.vn/" />
+<meta property="og:description"
+  content="SAPPORO Việt Nam chuyên cung cấp các mặt hàng thiết yếu cho tất cả mọi người." />
+
+<!-- For Twitter -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="CÔNG TY TNHH SAPPORO VIỆT NAM" />
+<meta name="twitter:description"
+  content="SAPPORO Việt Nam chuyên cung cấp các mặt hàng thiết yếu cho tất cả mọi người." />
+<!-- <meta name="twitter:image"
+  content="https://hoctienganhphanxa.com/api/p7rolie/uploads/images/2020-12-01T06:59:08.130Z-ms_banner_img1.jpg" /> -->
+
+<body>
+  <app-root></app-root>
+
+  <!-- Page level custom scripts -->
+  <!-- <script src="assets/js/demo/datatables-demo.js"></script> -->
+  <script>
+    function readURL(input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+          $('#blah')
+            .attr('src', e.target.result)
+            // .width(100)
+            .height(150);
+        };
+
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+  </script>
+
+  <!-- plugins:js -->
+  <script src="assets/admin/vendors/js/vendor.bundle.base.js"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page-->
+  <script src="assets/admin/vendors/icheck/icheck.min.js"></script>
+  <script src="assets/admin/vendors/typeahead.js/typeahead.bundle.min.js"></script>
+  <script src="assets/admin/vendors/select2/select2.min.js"></script>
+  <!-- Plugin js for this page-->
+  <!-- <script src="assets/admin/vendors/jquery-bar-rating/jquery.barrating.min.js"></script>
+  <script src="assets/admin/vendors/chart.js/Chart.min.js"></script>
+  <script src="assets/admin/vendors/raphael/raphael.min.js"></script>
+  <script src="assets/admin/vendors/morris.js/morris.min.js"></script>
+  <script src="assets/admin/vendors/jquery-sparkline/jquery.sparkline.min.js"></script> -->
+  <!-- End plugin js for this page-->
+
+  <!-- Custom js for this page-->
+  <script src="assets/admin/js/dashboard.js"></script>
+  <!-- End custom js for this page-->
+  <!-- inject:js -->
+  <script src="assets/admin/js/off-canvas.js"></script>
+  <script src="assets/admin/js/hoverable-collapse.js"></script>
+  <script src="assets/admin/js/misc.js"></script>
+  <script src="assets/admin/js/settings.js"></script>
+  <script src="assets/admin/js/todolist.js"></script>
+  <!-- endinject -->
+
+  <!-- Custom js for this page-->
+  <!-- <script src="assets/admin/js/data-table.js"></script> -->
+  <!-- Custom js for this page-->
+  <script src="assets/admin/js/file-upload.js"></script>
+  <script src="assets/admin/js/iCheck.js"></script>
+  <script src="assets/admin/js/typeahead.js"></script>
+  <script src="assets/admin/js/select2.js"></script>
+
+  <!-- Plugin js for this page-->
+  <!-- <script src="assets/admin/vendors/jquery-toast-plugin/jquery.toast.min.js"></script> -->
+  <!-- Custom js for this page-->
+  <!-- <script src="assets/admin/js/toastDemo.js"></script>
+  <script src="assets/admin/js/desktop-notification.js"></script> -->
+  <!-- End custom js for this page-->
+  <script src="assets/admin/js/web-home.js"></script>
+
+  <!-- ========================= JS here ========================= -->
+  <script src="assets/web/js/bootstrap.min.js"></script>
+  <script src="assets/web/js/tiny-slider.js"></script>
+  <script src="assets/web/js/glightbox.min.js"></script>
+  <script src="assets/web/js/main.js"></script>
+  <script type="text/javascript">
+    //========= Hero Slider 
+    tns({
+      container: '.hero-slider',
+      slideBy: 'page',
+      autoplay: true,
+      autoplayButtonOutput: false,
+      mouseDrag: true,
+      gutter: 0,
+      items: 1,
+      nav: false,
+      controls: true,
+      controlsText: ['<i class="lni lni-chevron-left"></i>', '<i class="lni lni-chevron-right"></i>'],
+    });
+
+    //======== Brand Slider
+    tns({
+      container: '.brands-logo-carousel',
+      autoplay: true,
+      autoplayButtonOutput: false,
+      mouseDrag: true,
+      gutter: 15,
+      nav: false,
+      controls: false,
+      responsive: {
+        0: {
+          items: 1,
+        },
+        540: {
+          items: 3,
+        },
+        768: {
+          items: 5,
+        },
+        992: {
+          items: 6,
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
